@@ -1,9 +1,0 @@
-const response=(status,message,data,res)=>{
-    res.json({
-    status,
-    message,
-    data,
-    })
-}
-
-module.exports=response

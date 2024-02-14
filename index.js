@@ -1,47 +1,18 @@
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
-const connect = require('./config/db')
-const response = require('./utils/respons')
+const cors = require('cors')
+const dotenv = require('dotenv')
+const product = require('./routes/product')
 
-app.use(bodyParser.json())
+dotenv.config()
 
-app.get('/', (req, res) => {
-  const sql = 'SELECT * FROM barang'
-  connect.query(sql, (err, result) => {
-    if (err) throw err
-    response('Succses', 'ok,', result, res)
-  })
-})
+app.use(express.json())
 
-app.post('/', (req, res) => {
-  const { namaBarang, harga } = req.body
-  const sql = `INSERT INTO barang (nma_brang,harga) VALUES ("${namaBarang}","${harga}")`
-  connect.query(sql, (err, result) => {
-    if (err) throw err
-    response('succses', 'succses added', result, res)
-  })
-})
+app.use(cors())
 
-app.put('/', (req, res) => {
-  const { id } = req.query
-  const { namaBarang, harga } = req.body
-  const sql = `UPDATE barang SET nma_brang='${namaBarang}', harga='${harga}' WHERE id='${id}'`
-  connect.query(sql, (err, result) => {
-    if (err) throw err
-    response('ok', 'Succses Update', result, res)
-  })
-})
+// routes
+app.use('/product', product)
 
-app.delete('/', (req, res) => {
-  const { id } = req.query
-  const sql = `DELETE FROM barang WHERE id='${id}'`
-  connect.query(sql, (err, result) => {
-    if (err) throw err
-    response('ok', 'Succses deleted', result, res)
-  })
-})
-
-app.listen(300, () => {
-  console.log('server is runing....')
+app.listen(process.env.PORT, () => {
+  console.log(`server is running ${process.env.PORT}`)
 })
