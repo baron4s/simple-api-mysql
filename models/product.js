@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   Product.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       nama: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -26,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      description: DataTypes.STRING,
       harga: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -35,10 +41,38 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      stock: DataTypes.INTEGER,
+      image: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notNull: {
+            msg: 'gambar tidak boleh kosong',
+          },
+        },
+      },
+      category_id: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notNull: {
+            msg: 'kategori tidak boleh kosong',
+          },
+          isInt: true,
+          isExists(value) {
+            return sequelize.models.Category.findByPk(value).then((el) => {
+              if (!el) {
+                throw new Error('kategori tidak ditemukan')
+              }
+            })
+          },
+        },
+      },
+      countReview: DataTypes.INTEGER,
     },
     {
       sequelize,
-      modelName: 'product',
+      modelName: 'Product',
     },
   )
   return Product
